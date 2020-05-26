@@ -1,0 +1,47 @@
+apply plugin: 'com.android.application'
+apply plugin: 'com.neenbedankt.android-apt'
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.3"
+    defaultConfig {
+        applicationId "cn.uc.gamesdk.demo"
+        minSdkVersion 16
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    useLibrary 'org.apache.http.legacy'
+}
+
+repositories {
+    flatDir {
+        dirs 'aar'
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile 'com.android.support:appcompat-v7:26.1.0'
+    compile 'com.jakewharton:butterknife:8.0.0'
+    apt('com.jakewharton:butterknife-compiler:8.0.0')
+    fileTree(dir: 'aar', include: ['*.aar']).each { file ->
+        compile(name: file.name.lastIndexOf('.').with {
+            it != -1 ? file.name[0..<it] : file.name
+        }, ext: 'aar')
+    }
+}
+
+apt {
+    arguments {
+        // you can set annotation processing options here
+        logLevel 'TRACE'
+        logAppenderConsole 'true'
+    }
+}
